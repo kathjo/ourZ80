@@ -1173,6 +1173,13 @@ module CPU_Control (
 			 endcase // case (`X_DECODE)
 		   end // case: NO
 		   
+		   2: begin
+			 if(`Z_DECODE <= 3) begin
+			    if(`Y_DECODE >= 4) begin
+				  ;
+			    end
+			 end	
+		   end 
 		   //pre_op	
 		   CB: begin
 			 case(`X_DECODE) 
@@ -1519,9 +1526,9 @@ module CPU_Control (
 					   end
 					   t4: begin
 						 reg_read_1 <= IXH;
-						 reg_read_2 <= NULL;//nur carry wird aufaddiert
-						 alu_op_a_sel <= 1;
-						 alu_op_b_sel <= 2;
+						 reg_read_2 <= F//{7'b0000000,alu_flags[0]}
+									alu_op_a_sel <= 1;
+						 alu_op_b_sel <= ;
 						 alu_opcode <= ADD_ci;
 						 data_adr [15:0] <= alu_res;
 					   end
@@ -1562,9 +1569,9 @@ module CPU_Control (
 					   end
 					   t4: begin
 						 reg_read_1 <= IXH;
-						 reg_read_2 <= NULL;//{7'b0000000,alu_flags[0]}
-						 alu_op_a_sel <= 1;
-						 alu_op_b_sel <= 2;
+						 reg_read_2 <= F//{7'b0000000,alu_flags[0]}
+									alu_op_a_sel <= 1;
+						 alu_op_b_sel <= ;
 						 alu_opcode <= ADD_ci;
 						 data_adr [15:0] <= alu_res;
 					   end
@@ -1628,245 +1635,244 @@ module CPU_Control (
 			   end
 			   //X
 			   3: begin
-				 case(`Z_DECODE) 
-				   
-				   1: begin	
-					 case(`Y_DECODE) 
-					   
-					   4: begin					// POP IX
-						 ;
-					   end
-					   
-					   5: begin					// JP (IX)
-						 ;
-					   end
-					   
-					   7: begin					// LD SP, IX
-						 ;
-					   end
-					   default:catch_up <= 1;
-					 endcase
-				   end
-				   
-				   3: begin
-					 case(`Y_DECODE) 
-					   
-					   1: begin					// RLC, BIT, SET b,(IX+d)
-						 ;
-					   end
-					   
-					   4: begin					// EX (SP), IX
-						 ;
-					   end
-					   default:catch_up <= 1;
-					 endcase
-				   end
-				   
-				   5: begin
-					 case(`Y_DECODE) 
-					   4: begin					//PUSH IX
-						 ;
-					   end
-					   default:catch_up <= 1;
-					 endcase
-				   end
-				   default:catch_up <= 1;
-				 endcase // case (`Z_DECODE)
-			   end // case: 3
-			   
-			   default:catch_up <= 1;	
-			   
-			 endcase // case (`X_DECODE)
-			 
-		   end // case: DDCB
+				 
+			   end
+			   case(`Z_DECODE) 
+				
+				1: begin	
+				   case(`Y_DECODE) 
+					
+					4: begin					// POP IX
+					   ;
+					end
+					
+					5: begin					// JP (IX)
+					   ;
+					end
+					
+					7: begin					// LD SP, IX
+					   ;
+					end
+					default:catch_up <= 1;
+				   endcase
+				end
+				
+				3: begin
+				   case(`Y_DECODE) 
+					
+					1: begin					// RLC, BIT, SET b,(IX+d)
+					   ;
+					end
+					
+					4: begin					// EX (SP), IX
+					   ;
+					end
+					default:catch_up <= 1;
+				   endcase
+				end
+				
+				5: begin
+				   case(`Y_DECODE) 
+					
+					4: begin					//PUSH IX
+					   ;
+					end
+					default:catch_up <= 1;
+				   endcase
+				end
+				default:catch_up <= 1;
+			   endcase
+			   default:	
+				endcase
+		   endcase
+	   end
+	   //pre_op
+	   FDCB: begin
+		 case(`X_DECODE)
 		   
-		   //pre_op
-		   FDCB: begin
-			 case(`X_DECODE)
-			   
-			   //X
-			   0: begin
-				 case(`Z_DECODE)
-				   1: begin
-					 case(`Y_DECODE) 
-					   4: begin				//LD IY, nn
-						 ;
-					   end
-					   
-					   //												  pp1: begin				//ADD IY,pp	hier fehlt noch decoder struktur
-					   //													  
-					   //												  end
-					   
-					 endcase
-				   end
-				   2: begin
-					 case(`Y_DECODE) 
-					   4: begin				//LD (nn),IY
-						 ;
-					   end
-					   
-					   5: begin				//LD IY,nn
-						 ;
-					   end
-					   default:catch_up <= 1;
-					 endcase // case (`Y_DECODE)
-				   end
-				   3: begin
-					 case(`Y_DECODE) 
-					   4: begin				//INC IY
-						 ;
-					   end
-					   
-					   5: begin				//DEC IY
-						 ;
-					   end
-					   default:catch_up <= 1;
-					 endcase
-				   end
-				   4: begin
-					 case(`Y_DECODE) 
-					   6: begin				//INC (IY+d)
-						 ;
-					   end
-					   default:catch_up <= 1;
-					 endcase
-				   end
-				   5: begin
-					 case(`Y_DECODE) 	
-					   6: begin			// DEC (IY+d)
-						 ;
-					   end
-					   default:catch_up <= 1;
-					 endcase
-				   end
-				   6: begin
-					 case(`Y_DECODE) 
-					   6: begin				//LD (LY+d),n
-						 ;
-					   end
-					   default:catch_up <= 1;
-					 endcase
-				   end
-				   default:catch_up <= 1;
-				 endcase
-			   end
-			   //X
+		   //X
+		   0: begin
+			 case(`Z_DECODE)
 			   1: begin
-				 case(`Z_DECODE)	
-				   6: begin					//LD r, (IY+d)
-					 ;
-				   end
-				   default:catch_up <= 1;
-				 endcase
 				 case(`Y_DECODE) 
-				   6: begin					// LD (IY+d),r
+				   4: begin				//LD IY, nn
+					 ;
+				   end
+				   
+				   //												  pp1: begin				//ADD IY,pp	hier fehlt noch decoder struktur
+				   //													  
+				   //												  end
+				   
+				 endcase
+			   end
+			   2: begin
+				 case(`Y_DECODE) 
+				   4: begin				//LD (nn),IY
+					 ;
+				   end
+				   
+				   5: begin				//LD IY,nn
 					 ;
 				   end
 				   default:catch_up <= 1;
-				 endcase	
-			   end // case: 1
-			   //X
-			   2: begin
-				 case(`Z_DECODE)	
-				   6: begin
-					 case(`Y_DECODE) 
-					   
-					   1: begin			//ADC A, (IY+d) und ADD IY, pp
-						 ;
-					   end
-					   
-					   2: begin			//SUB (IY+d)
-						 ;
-					   end
-					   
-					   3: begin			//SBC A, (IY+d)
-						 ;
-					   end
-					   
-					   4: begin			//AND (IY+d)
-						 ;
-					   end
-					   
-					   5: begin			//XOR (IY+d)
-						 ;
-					   end
-					   
-					   6: begin			//OR (IY+d)
-						 ;
-					   end
-					   
-					   7: begin			//CP (IY+d)
-						 ;
-					   end
-					   default:catch_up <= 1;
-					 endcase
+				 endcase // case (`Y_DECODE)
+			   end
+			   3: begin
+				 case(`Y_DECODE) 
+				   4: begin				//INC IY
+					 ;
+				   end
+				   
+				   5: begin				//DEC IY
+					 ;
 				   end
 				   default:catch_up <= 1;
 				 endcase
 			   end
-			   //X
-			   3: begin
-				 case(`Z_DECODE) 
-				   
-				   1: begin	
-					 case(`Y_DECODE) 
-					   
-					   4: begin					// POP IY
-						 ;
-					   end
-					   
-					   5: begin					// JP (IY)
-						 ;
-					   end
-					   
-					   7: begin					// LD SP, IY 
-						 ;
-					   end
-					   default:catch_up <= 1;
-					 endcase
-				   end
-				   
-				   3: begin
-					 case(`Y_DECODE) 
-					   
-					   1: begin					// RLC, BIT, SET b,(IY+d) ....
-						 ;
-					   end
-					   
-					   4: begin					// EX (SP), IY
-						 ;
-					   end
-					   default:catch_up <= 1;
-					 endcase
-				   end
-				   
-				   5: begin
-					 case(`Y_DECODE) 
-					   
-					   4: begin					//PUSH IY
-						 ;
-					   end
-					   default:catch_up <= 1;
-					 endcase
+			   4: begin
+				 case(`Y_DECODE) 
+				   6: begin				//INC (IY+d)
+					 ;
 				   end
 				   default:catch_up <= 1;
-				 endcase // case (`Z_DECODE)
+				 endcase
+			   end
+			   5: begin
+				 case(`Y_DECODE) 	
+				   6: begin			// DEC (IY+d)
+					 ;
+				   end
+				   default:catch_up <= 1;
+				 endcase
+			   end
+			   6: begin
+				 case(`Y_DECODE) 
+				   6: begin				//LD (LY+d),n
+					 ;
+				   end
+				   default:catch_up <= 1;
+				 endcase
 			   end
 			   default:catch_up <= 1;
-			 endcase // case (`X_DECODE)
-			 
+			 endcase
+		   end
+		   //X
+		   1: begin
+			 case(`Z_DECODE)	
+			   6: begin					//LD r, (IY+d)
+				 ;
+			   end
+			   default:catch_up <= 1;
+			 endcase
+			 case(`Y_DECODE) 
+			   6: begin					// LD (IY+d),r
+				 ;
+			   end
+			   default:catch_up <= 1;
+			 endcase	
+		   end // case: 1
+		   //X
+		   2: begin
+			 case(`Z_DECODE)	
+			   6: begin
+				 case(`Y_DECODE) 
+				   
+				   1: begin			//ADC A, (IY+d) und ADD IY, pp
+					 ;
+				   end
+				   
+				   2: begin			//SUB (IY+d)
+					 ;
+				   end
+				   
+				   3: begin			//SBC A, (IY+d)
+					 ;
+				   end
+				   
+				   4: begin			//AND (IY+d)
+					 ;
+				   end
+				   
+				   5: begin			//XOR (IY+d)
+					 ;
+				   end
+				   
+				   6: begin			//OR (IY+d)
+					 ;
+				   end
+				   
+				   7: begin			//CP (IY+d)
+					 ;
+				   end
+				   default:catch_up <= 1;
+				 endcase
+			   end
+			   default:catch_up <= 1;
+			 endcase
+		   end
+		   //X
+		   3: begin
+			 case(`Z_DECODE) 
+			   
+			   1: begin	
+				 case(`Y_DECODE) 
+				   
+				   4: begin					// POP IY
+					 ;
+				   end
+				   
+				   5: begin					// JP (IY)
+					 ;
+				   end
+				   
+				   7: begin					// LD SP, IY 
+					 ;
+				   end
+				   default:catch_up <= 1;
+				 endcase
+			   end
+			   
+			   3: begin
+				 case(`Y_DECODE) 
+				   
+				   1: begin					// RLC, BIT, SET b,(IY+d) ....
+					 ;
+				   end
+				   
+				   4: begin					// EX (SP), IY
+					 ;
+				   end
+				   default:catch_up <= 1;
+				 endcase
+			   end
+			   
+			   5: begin
+				 case(`Y_DECODE) 
+				   
+				   4: begin					//PUSH IY
+					 ;
+				   end
+				   default:catch_up <= 1;
+				 endcase
+			   end
+			   default:catch_up <= 1;
+			 endcase // case (`Z_DECODE)
 		   end
 		   default:catch_up <= 1;
 		 endcase // case (`X_DECODE)
+		 
+	   end
+	   default:catch_up <= 1;
+	 endcase // case (`X_DECODE)
 
-	   end // always @ (posedge clk)
-	   
-	   
-	 endcase
+   end // always @ (posedge clk)
+   
+   
+endcase
 
-	 t_state <= t_state + 1;				
+t_state <= t_state + 1;				
 
-   end // UNMATCHED !!
+end // UNMATCHED !!
 
 
 
